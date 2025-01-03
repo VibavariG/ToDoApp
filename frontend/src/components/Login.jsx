@@ -18,11 +18,13 @@ const Login = () => {
       });
       setToken(response.data.token);
       localStorage.setItem("token", response.data.token);
+      localStorage.setItem("username", username); // Save username to display in the navbar
       navigate("/dashboard");
     } catch (error) {
       console.error("Authentication failed:", error);
       setToken(null);
       localStorage.removeItem("token");
+      localStorage.removeItem("username");
       if (error.response && error.response.data) {
         setErrorMessage(error.response.data); // Set the error message if present in the error response
       } else {
