@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
 
 export const AuthContext = createContext();
 
@@ -8,7 +9,22 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
-    setToken(storedToken);
+    if (storedToken) {
+      const decodedToken = jwtDecode(storedToken);
+      console.log("print local storage token in auth context: "+ localStorage.getItem("token"))
+      console.log(decodedToken)
+      console.log("expiry time " + decodedToken.exp)
+      const currentTime = Date.now() / 1000; // Convert to seconds
+      console.log("current time "+ currentTime)
+      if (decodedToken.exp < currentTime) {
+        // Token has expired
+        localStorage.removeItem("token");
+        setToken(null);
+        console.log("printing after token set to null " +token)
+      } else {
+        setToken(storedToken);
+      }
+    }
     setLoading(false); 
   }, []);
 
@@ -18,3 +34,5 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
+//children = Router, Route, Routes, Login, Dashboard, Registration
