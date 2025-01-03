@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const router = express.Router();
 const bcrypt = require("bcrypt");
+const { generateToken } = require('../utils/jwtHelper');
 
 router.post("/login", async (req, res) => {
   const { username, password } = req.body;
@@ -16,7 +17,7 @@ router.post("/login", async (req, res) => {
   if (!validPassword)
     return res.status(400).send("Invalid username or password.");
 
-  const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET);
+  const token = generateToken(user);
 
   res.send({ token });
 });

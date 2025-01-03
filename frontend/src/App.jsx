@@ -1,9 +1,3 @@
-// const App = () => {
-//   return <h1>Hello, Vite + React!</h1>;
-// };
-
-// export default App;
-
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./components/Login";
