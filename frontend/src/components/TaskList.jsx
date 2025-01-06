@@ -58,9 +58,11 @@ const TaskList = () => {
     }
   };
 
-  const groupedTasks = tasks.reduce((acc, task) => {
+  const groupedTasks = tasks
+  .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate)) // Sort tasks
+  .reduce((acc, task) => {
     const [year, month, day] = task.dueDate.split("-");
-    const date = new Date(year, month - 1, day.substring(0,2)).toDateString();; // Month is 0-indexed
+    const date = new Date(year, month - 1, day.substring(0, 2)).toDateString();
     acc[date] = acc[date] || [];
     acc[date].push(task);
     return acc;
