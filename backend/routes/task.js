@@ -33,7 +33,18 @@ router.post("/", authenticate, async (req, res) => {
 // Get all tasks for a user
 router.get("/", authenticate, async (req, res) => {
   try {
-    const tasks = await Task.find({ userId: req.userId }).sort({ dueDate: 1 });
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    console.log(today)
+
+    const tasks = await Task.find({
+      userId: req.userId,
+      $or: [
+        { dueDate: { $gte: today } }, // Future and today complete & incomplete tasks
+        { isComplete: false, dueDate: { $lt: today } }, // Overdue incomplete tasks
+      ],
+    }).sort({ dueDate: 1 });
+
     res.send(tasks);
   } catch (err) {
     res.status(500).send("Error fetching tasks.");
