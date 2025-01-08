@@ -1,6 +1,6 @@
 # To-Do List Web Application
 
-This project is a full-stack web application for managing a to-do list with features like task categorization, sorting, filtering, and user authentication.
+This project is a full-stack web application for managing a to-do list, where users can Create, Edit and Delete tasks. The tasks will be displayed by date, priority, with overdue tasks highlighted. For future scope, users can also see the trends of how many tasks they completed this year, and most recurring tasks.
 
 ## Features
 1. User Registration and Login (JWT Authentication)

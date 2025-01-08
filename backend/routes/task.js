@@ -51,6 +51,15 @@ router.get("/", authenticate, async (req, res) => {
   }
 });
 
+//get completed past tasks
+router.get("/past", authenticate, async (req, res) => {
+  try{
+
+  } catch (err) {
+    res.status(500).send("Error fetching tasks.");
+  }
+});
+
 // Update a task
 router.put("/:id", authenticate, async (req, res) => {
   try {
