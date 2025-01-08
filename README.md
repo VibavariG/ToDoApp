@@ -23,5 +23,23 @@ This project is a full-stack web application for managing a to-do list, where us
 ### Installation
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/todo-app.git
-   cd todo-app
+   git clone https://github.com/VibavariG/ToDoApp.git
+   cd ToDoApp
+2. npm install
+   ```bash
+   cd backend 
+   npm install
+
+   cd ../frontend
+   npm install
+3. .env file
+   ```bash
+   cd backend
+   vi .env
+   
+   Add the following:
+   ```bash
+   JWT_SECRET=<secret>
+   MONGODB_URI=<url>
+
+
