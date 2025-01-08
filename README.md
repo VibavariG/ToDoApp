@@ -37,8 +37,6 @@ This project is a full-stack web application for managing a to-do list, where us
    cd backend
    vi .env
    
-   Add the following:
-   ```bash
    JWT_SECRET=<secret>
    MONGODB_URI=<url>
 
