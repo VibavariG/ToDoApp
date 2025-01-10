@@ -58,17 +58,40 @@ const TaskList = () => {
     }
   };
 
-  const groupedTasks = tasks
-  .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate)) // Sort tasks
-  .reduce((acc, task) => {
-    const [year, month, day] = task.dueDate.split("-");
-    const date = new Date(year, month - 1, day.substring(0, 2)).toDateString();
-    acc[date] = acc[date] || [];
-    acc[date].push(task);
-    return acc;
-  }, {});
+const getLocalDate = () => {
+    const now = new Date();
+    now.setHours(0, 0, 0, 0); // Set time to midnight local time
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+    const day = String(now.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+};
+  
+console.log(getLocalDate()); // Correct local date in YYYY-MM-DD
+const today = getLocalDate()
 
-  return (
+// Mark overdue tasks and group them by due date
+const groupedTasks = tasks
+.map((task) => {
+    if (task.dueDate < today && !task.isComplete) {
+      task.isOverdue = true; // Mark overdue tasks
+    } else {
+        task.isOverdue = false
+    }
+    return task;
+}).sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate)) // Sort tasks by due date
+.reduce((acc, task) => {
+    // Use today for overdue tasks, otherwise use the task's due date
+    const taskDate = task.isOverdue ? today : task.dueDate
+    // Initialize the array if the key doesn't exist, then push the task
+    acc[taskDate] = acc[taskDate] || [];
+    acc[taskDate].push(task);
+    return acc;
+}, {});
+
+console.log(groupedTasks);
+
+return (
     <div>
       <h1>To-Do Calendar</h1>
       <div>
@@ -88,7 +111,7 @@ const TaskList = () => {
         <div key={date}>
           <h2>{date}</h2>
           {tasks.map((task) => (
-            <div key={task._id}>
+            <div key={task._id} style={{ color: task.isOverdue ? "red" : "black" }}>
               <input
                 value={task.title}
                 onChange={(e) =>
@@ -109,13 +132,14 @@ const TaskList = () => {
                   updateTask(task._id, { ...task, isComplete: e.target.checked })
                 }
               />
+              <span>{task.isOverdue ? ` (Original due: ${new Date(task.dueDate.split("-")[0], task.dueDate.split("-")[1] - 1, task.dueDate.split("-")[2].substring(0, 2)).toDateString()})` : ""}</span>
               <button onClick={() => deleteTask(task._id)}>Delete</button>
             </div>
           ))}
         </div>
       ))}
     </div>
-  );
+  );  
 };
 
 export default TaskList;

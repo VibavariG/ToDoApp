@@ -18,10 +18,26 @@ const authenticate = (req, res, next) => {
   }
 };
 
+const getLocalDate = () => {
+    const now = new Date();
+    now.setHours(0, 0, 0, 0); // Set time to midnight local time
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+    const day = String(now.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+};
+
+const today = getLocalDate()
+console.log(today)
+
 // Create a new task
 router.post("/", authenticate, async (req, res) => {
   try {
     const { title, dueDate } = req.body;
+    // Validate dueDate format (basic check)
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(dueDate)) {
+      return res.status(400).send("Invalid due date format. Use YYYY-MM-DD.");
+    }
     const task = new Task({ title, dueDate, userId: req.userId });
     await task.save();
     res.status(201).send(task);
@@ -30,13 +46,9 @@ router.post("/", authenticate, async (req, res) => {
   }
 });
 
-// Get all tasks for a user
+// Get pending & future tasks for a user
 router.get("/", authenticate, async (req, res) => {
   try {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    console.log(today)
-
     const tasks = await Task.find({
       userId: req.userId,
       $or: [
@@ -51,14 +63,37 @@ router.get("/", authenticate, async (req, res) => {
   }
 });
 
-//get completed past tasks
-router.get("/past", authenticate, async (req, res) => {
-  try{
-
+// get all tasks for a user
+router.get("/all", authenticate, async (req, res) => {
+  try {
+    const tasks = await Task.find({
+      userId: req.userId,
+      $or: [
+        { dueDate: { $gte: today } }, // Future and today complete & incomplete tasks
+        { dueDate: { $lt: today } }, // Overdue incomplete tasks
+      ],
+    }).sort({ dueDate: 1 });
+    res.send(tasks);
   } catch (err) {
     res.status(500).send("Error fetching tasks.");
   }
 });
+
+//get completed past tasks
+router.get("/past", authenticate, async (req, res) => {
+  try{
+    const completedAndPastTasks = await Task.find({
+      userId: req.userId,
+      $or: [
+        { isComplete: true, dueDate: { $lt: today } },
+      ],
+    }).sort({ dueDate: 1 });
+    res.send(completedAndPastTasks);
+  } catch (err) {
+    res.status(500).send("Error fetching tasks.");
+  }
+});
+
 
 // Update a task
 router.put("/:id", authenticate, async (req, res) => {
