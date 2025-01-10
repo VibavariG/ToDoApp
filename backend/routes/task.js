@@ -70,7 +70,7 @@ router.get("/all", authenticate, async (req, res) => {
       userId: req.userId,
       $or: [
         { dueDate: { $gte: today } }, // Future and today complete & incomplete tasks
-        { dueDate: { $lt: today } }, // Overdue incomplete tasks
+        { dueDate: { $lt: today } }, // Past complete & incomplete tasks
       ],
     }).sort({ dueDate: 1 });
     res.send(tasks);
