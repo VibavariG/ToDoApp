@@ -67,8 +67,7 @@ const getLocalDate = () => {
     return `${year}-${month}-${day}`;
 };
   
-console.log(getLocalDate()); // Correct local date in YYYY-MM-DD
-const today = getLocalDate()
+const today = getLocalDate()    // Correct local date in YYYY-MM-DD
 
 // Mark overdue tasks and group them by due date
 const groupedTasks = tasks
